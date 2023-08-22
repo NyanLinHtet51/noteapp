@@ -6,14 +6,16 @@ const NotesStyles = StyleSheet.create({
     paddingTop: 18,
     marginHorizontal: 10
   },
-  textParent: {
-    paddingHorizontal: 16,
-    paddingVertical: 18,
-    marginBottom: 18,
-    marginRight: 18,
-    width: '47%',
-    borderRadius: 16,
-    backgroundColor: '#D9E8FC',
+  textParent: (color) => {
+    return {
+      paddingHorizontal: 16,
+      paddingVertical: 18,
+      marginBottom: 18,
+      marginRight: 18,
+      width: '47%',
+      borderRadius: 16,
+      backgroundColor: color,
+    }
   },
   title: {
     fontSize: 14,
