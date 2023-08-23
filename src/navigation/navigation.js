@@ -10,7 +10,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name='Create' component={CreateNote} />
+        <Stack.Screen name='CreateNote' component={CreateNote} />
       </Stack.Navigator>
     </NavigationContainer>
   );
