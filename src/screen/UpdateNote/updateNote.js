@@ -1,20 +1,19 @@
 import { Text, TouchableOpacity, StyleSheet, ScrollView, View, TextInput } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Logo from '../../components/Logo/logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/native'
-import { v4 as uuidv4 } from 'uuid'
-import 'react-native-get-random-values'
 
-const CreateNote = ({ navigation }) => {
-  const [title, setTitle] = useState("");
-  const [detail, setDetail] = useState("");
-  const [checked, setChecked] = useState(1);
+const UpdateNote = ({ navigation, route }) => {
+  const {noteData } = route.params;
+  const [title, setTitle] = useState(noteData.title);
+  const [detail, setDetail] = useState(noteData.detail);
+  const [checked, setChecked] = useState(noteData.category);
   const [noteList, setNoteList] = useState([]);
   const [errorState, setErrState] = useState(errStateRef);
   const isFocus = useIsFocused()
-  
+
   useEffect(() => {
     if (isFocus) {
       getNoteList()
@@ -30,9 +29,15 @@ const CreateNote = ({ navigation }) => {
 
   const handleSubmit = () => {
     if (isValidate()) {
-      const note = { id: uuidv4(), title, category: checked, detail }
-      const totalNoteList = [...noteList, note];
-      AsyncStorage.setItem('notes', JSON.stringify(totalNoteList));
+      const updatedNote = noteList.filter(item => {
+        if (item.id === noteData.id) {
+          item.title = title
+          item.category = checked
+          item.detail = detail
+        }
+        return item;
+      })
+      AsyncStorage.setItem('notes', JSON.stringify(updatedNote))
       navigation.navigate("Home")
     }
   }
@@ -64,9 +69,9 @@ const CreateNote = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, margin: 10 }}>
-      <Logo showBackBtn={true} navigation={ navigation} />
+      <Logo showBackBtn={true} navigation={navigation} />
 
-      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
+      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>   
       <TextInput style={styles.textInput} placeholder='Enter Title' value={title} onChangeText={(value) => setTitle(value)} />
       {errorState.titleErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>}
 
@@ -107,7 +112,7 @@ const CreateNote = ({ navigation }) => {
       {errorState.detailErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.detailErrMsg}</Text>}
 
       <TouchableOpacity style={styles.createBtn} onPress={handleSubmit} >
-        <Text style={styles.createText}>Create</Text>
+        <Text style={styles.createText}>Update</Text>
       </TouchableOpacity>
     </View>
   )
@@ -179,4 +184,4 @@ const styles = StyleSheet.create({
     marginTop: 8
   }
 })
-export default CreateNote;
+export default UpdateNote;
