@@ -26,7 +26,6 @@ const Home = ({ navigation }) => {
     }
   }, [isFocus])
 
-  console.log("HOME NOTES",notes);
   const getNoteList = async () => {
     const result = await AsyncStorage.getItem('notes');
     if (result !== null) {

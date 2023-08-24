@@ -20,8 +20,6 @@ const UpdateNote = ({ navigation, route }) => {
     }
   }, [isFocus])
 
-  console.log("UPDATE LIST",noteList);
-
   const getNoteList = async () => {
     const result = await AsyncStorage.getItem('notes');
     const data = JSON.parse(result) || [];
