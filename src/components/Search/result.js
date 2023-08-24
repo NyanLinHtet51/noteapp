@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-const Result = () => {
+const NoResult = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.notFound}>Not Found.</Text>
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
     fontSize: 40
   }
 })
-export default Result
+export default NoResult

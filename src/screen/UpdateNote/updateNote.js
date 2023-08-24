@@ -6,10 +6,10 @@ import { RadioButton } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/native'
 
 const UpdateNote = ({ navigation, route }) => {
-  const {noteData } = route.params;
-  const [title, setTitle] = useState(noteData.title);
-  const [detail, setDetail] = useState(noteData.detail);
-  const [checked, setChecked] = useState(noteData.category);
+  const { noteDataID } = route.params;
+  const [title, setTitle] = useState("");
+  const [detail, setDetail] = useState("");
+  const [checked, setChecked] = useState(1);
   const [noteList, setNoteList] = useState([]);
   const [errorState, setErrState] = useState(errStateRef);
   const isFocus = useIsFocused()
@@ -22,23 +22,27 @@ const UpdateNote = ({ navigation, route }) => {
 
   const getNoteList = async () => {
     const result = await AsyncStorage.getItem('notes');
-    if(result !== null) {
-      setNoteList(JSON.parse(result));
-    }
+    const data = JSON.parse(result) || [];
+    setNoteList(data);
+    const findItem = data.find(item => item.id === noteDataID);
+    setTitle(findItem.title);
+    setChecked(findItem.category);
+    setDetail(findItem.detail);
   }
 
   const handleSubmit = () => {
     if (isValidate()) {
-      const updatedNote = noteList.filter(item => {
-        if (item.id === noteData.id) {
-          item.title = title
-          item.category = checked
-          item.detail = detail
+      setTitle(title);
+      setChecked(checked);
+      setDetail(detail);
+      const updatedNoteList = noteList.map(item => {
+        if (item.id === noteDataID) {
+          return { ...item, title, category: checked, detail };
         }
         return item;
-      })
-      AsyncStorage.setItem('notes', JSON.stringify(updatedNote))
-      navigation.navigate("Home")
+      });
+      AsyncStorage.setItem('notes', JSON.stringify(updatedNoteList));
+      navigation.navigate("Home");
     }
   }
 
@@ -71,7 +75,7 @@ const UpdateNote = ({ navigation, route }) => {
     <View style={{ flex: 1, margin: 10 }}>
       <Logo showBackBtn={true} navigation={navigation} />
 
-      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>   
+      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
       <TextInput style={styles.textInput} placeholder='Enter Title' value={title} onChangeText={(value) => setTitle(value)} />
       {errorState.titleErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>}
 

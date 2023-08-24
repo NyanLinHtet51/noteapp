@@ -3,20 +3,21 @@ import React, { useEffect, useState } from 'react'
 import Logo from '../../components/Logo/logo'
 import Search from '../../components/Search/search'
 import Categories from '../../components/Categories/categories'
-import Result from '../../components/Search/result'
 import Notes from '../../components/Notes/notes'
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons'
+import NoResult from '../../components/Search/result'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native'
 
 
+
 const Home = ({ navigation }) => {
   const [notes, setNotes] = useState([]);
-  const [filteredNote, setFilteredNote] = useState([])
+  const [allNote, setAllNote] = useState([])
   const [searchValue, setSearchValue] = useState("");
   const [resultNotFound, setResultNotFound] = useState(false);
   const [tabValue, setTabValue] = useState(0);
-  const [arr, setArr] = useState('');
+  const [categoryFiltered, setCategoryFiltered] = useState([]);
   const isFocus = useIsFocused()
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const Home = ({ navigation }) => {
     const result = await AsyncStorage.getItem('notes');
     if (result !== null) {
       setNotes(JSON.parse(result));
-      setFilteredNote(JSON.parse(result));
+      setAllNote(JSON.parse(result));
     }
   }
 
@@ -40,19 +41,18 @@ const Home = ({ navigation }) => {
    * @returns 
    */
 
-  const getSearchValue = async (text) => {
+  const getSearchValue = (text) => {
     if (tabValue === 0) {
-      !text.trim() ? allNoteList(notes) : filteredNoteList(notes, text)
+      !text.trim() ? allNoteList(allNote) : filteredNoteList(allNote, text)
     } else {
-      !text.trim() ? allNoteList(arr) : filteredNoteList(arr, text)
+      !text.trim() ? allNoteList(categoryFiltered) : filteredNoteList(categoryFiltered, text)
     }
   }
 
   const allNoteList = (arrayList) => {
     setSearchValue('');
     setResultNotFound(false);
-    const allNote = arrayList.map(item => item)
-    setNotes([...allNote])
+    setNotes([...arrayList])
   }
 
   const filteredNoteList = (arrayList, text) => {
@@ -61,26 +61,24 @@ const Home = ({ navigation }) => {
     const searchNote = arrayList.filter(note => (
       note.title.toLowerCase().includes(text.toLowerCase())
     ));
-    {
-      !!searchNote.length ? setNotes([...searchNote]) : setResultNotFound(true)
-    };
+    searchNote.length > 0 ? setNotes([...searchNote]) : setResultNotFound(true)
   }
 
   const getCategoryValue = async (categoryValue) => {
     if (categoryValue !== 0) {
       setTabValue(categoryValue);
-      const arr = filteredNote;
-      const filt = arr.filter(note => (note.category === categoryValue));
-      setNotes([...filt])
-      setArr([...filt])
+      const newArray = allNote;
+      const filteredArray = newArray.filter(note => (note.category === categoryValue));
+      setNotes([...filteredArray])
+      setCategoryFiltered([...filteredArray])
     } else {
       setTabValue(categoryValue);
       return await getNoteList();
     }
   }
 
-  const openNote = (noteData) => {
-    navigation.navigate('UpdateNote',{noteData})
+  const openNote = (noteDataID) => {
+    navigation.navigate('UpdateNote',{noteDataID})
   }
 
   return (
@@ -90,11 +88,11 @@ const Home = ({ navigation }) => {
         <Search passSearchValue={searchValue} getSearchValue={getSearchValue} />
         <Categories passValue={tabValue} getCategoryValue={getCategoryValue} />
         {
-          resultNotFound ? <Result /> :
+          resultNotFound ? <NoResult/> :
 
             <FlatList
               style={styles.noteParent} numColumns={2} data={notes}
-              renderItem={({ item, index }) => <Notes item={item} index={index} onPress={(item) => openNote(item)} />}
+              renderItem={({ item, index }) => <Notes item={item} index={index} onPress={(item) => openNote(item.id)} />}
               keyExtractor={item => item.id}
             />
         }

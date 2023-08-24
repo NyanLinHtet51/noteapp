@@ -27,7 +27,6 @@ const CreateNote = ({ navigation }) => {
       setNoteList(JSON.parse(result));
     }
   }
-
   const handleSubmit = () => {
     if (isValidate()) {
       const note = { id: uuidv4(), title, category: checked, detail }
