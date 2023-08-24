@@ -13,12 +13,12 @@ export const categoryArray = [
     },
     {
         id: 2,
-        status: 'Lecture Notes'
+        status: 'To Do Lists'
     },
     {
         id: 3,
-        status: 'To Do Lists'
-    },
+        status: 'Lecture Notes'
+    }, 
     {
         id: 4,
         status: 'Shopping Lists'
