@@ -3,7 +3,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const Logo = ({ showBackBtn, navigation }) => {
   const backArrow = () => {
-    navigation.navigate("Home")
+    navigation.goBack();
   }
   return (
     <View style={styles.logoParent}>

@@ -1,16 +1,17 @@
 import { Text, TouchableOpacity, StyleSheet, ScrollView, View, TextInput } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState,useContext } from 'react'
 import Logo from '../../components/Logo/logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/native'
+import { NoteContext } from '../../navigation/navigation';
 
 const UpdateNote = ({ navigation, route }) => {
+  const {notes,setNotes} = useContext(NoteContext)
   const { noteDataID } = route.params;
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
-  const [noteList, setNoteList] = useState([]);
   const [errorState, setErrState] = useState(errStateRef);
   const isFocus = useIsFocused()
 
@@ -20,11 +21,8 @@ const UpdateNote = ({ navigation, route }) => {
     }
   }, [isFocus])
 
-  const getNoteList = async () => {
-    const result = await AsyncStorage.getItem('notes');
-    const data = JSON.parse(result) || [];
-    setNoteList(data);
-    const findItem = data.find(item => item.id === noteDataID);
+  const getNoteList = () => {
+    const findItem = notes.find(item => item.id === noteDataID);
     setTitle(findItem.title);
     setChecked(findItem.category);
     setDetail(findItem.detail);
@@ -32,17 +30,15 @@ const UpdateNote = ({ navigation, route }) => {
 
   const handleSubmit = () => {
     if (isValidate()) {
-      setTitle(title);
-      setChecked(checked);
-      setDetail(detail);
-      const updatedNoteList = noteList.map(item => {
+      const updatedNoteList = notes.map(item => {
         if (item.id === noteDataID) {
           return { ...item, title, category: checked, detail };
         }
         return item;
       });
+      setNotes(updatedNoteList);
       AsyncStorage.setItem('notes', JSON.stringify(updatedNoteList));
-      navigation.navigate("Home");
+      navigation.navigate("Details",{noteDataID});
     }
   }
 

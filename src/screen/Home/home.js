@@ -1,5 +1,5 @@
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Logo from '../../components/Logo/logo'
 import Search from '../../components/Search/search'
 import Categories from '../../components/Categories/categories'
@@ -8,11 +8,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NoResult from '../../components/Search/result'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native'
-
-
+import { NoteContext } from '../../navigation/navigation'
 
 const Home = ({ navigation }) => {
-  const [notes, setNotes] = useState([]);
+  const { notes, setNotes } = useContext(NoteContext);
   const [allNote, setAllNote] = useState([])
   const [searchValue, setSearchValue] = useState("");
   const [resultNotFound, setResultNotFound] = useState(false);
@@ -78,7 +77,7 @@ const Home = ({ navigation }) => {
   }
 
   const openNote = (noteDataID) => {
-    navigation.navigate('UpdateNote',{noteDataID})
+    navigation.navigate('Details',{noteDataID})
   }
 
   return (

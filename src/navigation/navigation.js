@@ -3,18 +3,27 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../screen/Home/home';
 import CreateNote from '../screen/CreateNote/createNote';
 import UpdateNote from '../screen/UpdateNote/updateNote';
+import Details from '../screen/Details/details';
+import { createContext, useState } from 'react';
+
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = () => {
+export const NoteContext = createContext({});
 
+const AppNavigator = () => {
+  const [notes,setNotes] = useState([])
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name='Home' component={Home} />
-        <Stack.Screen name='CreateNote' component={CreateNote} />
-        <Stack.Screen name='UpdateNote' component={UpdateNote} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <NoteContext.Provider value={{notes,setNotes}}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name='Home' component={Home} />
+          <Stack.Screen name='CreateNote' component={CreateNote} />
+          <Stack.Screen name='UpdateNote' component={UpdateNote} />
+          <Stack.Screen name='Details' component={Details} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NoteContext.Provider>
+    
   );
 }
 

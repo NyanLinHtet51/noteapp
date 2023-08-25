@@ -1,36 +1,23 @@
 import { Text, TouchableOpacity, StyleSheet, ScrollView, View, TextInput } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Logo from '../../components/Logo/logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
-import { useIsFocused } from '@react-navigation/native'
 import { v4 as uuidv4 } from 'uuid'
 import 'react-native-get-random-values'
+import { NoteContext } from '../../navigation/navigation';
 
 const CreateNote = ({ navigation }) => {
+  const {notes,setNotes} = useContext(NoteContext)
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
-  const [noteList, setNoteList] = useState([]);
   const [errorState, setErrState] = useState(errStateRef);
-  const isFocus = useIsFocused()
   
-  useEffect(() => {
-    if (isFocus) {
-      getNoteList()
-    }
-  }, [isFocus])
-
-  const getNoteList = async () => {
-    const result = await AsyncStorage.getItem('notes');
-    if(result !== null) {
-      setNoteList(JSON.parse(result));
-    }
-  }
   const handleSubmit = () => {
     if (isValidate()) {
       const note = { id: uuidv4(), title, category: checked, detail }
-      const totalNoteList = [...noteList, note];
+      const totalNoteList = [...notes, note];
       AsyncStorage.setItem('notes', JSON.stringify(totalNoteList));
       navigation.navigate("Home")
     }
