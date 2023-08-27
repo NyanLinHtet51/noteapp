@@ -5,15 +5,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { v4 as uuidv4 } from 'uuid'
 import 'react-native-get-random-values'
-import { NoteContext } from '../../navigation/navigation';
+import { CategoryContext, NoteContext } from '../../navigation/navigation';
 
 const CreateNote = ({ navigation }) => {
-  const {notes,setNotes} = useContext(NoteContext)
+  const { notes, setNotes } = useContext(NoteContext)
+  const { categoryList, setCategoryList } = useContext(CategoryContext)
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
   const [errorState, setErrState] = useState(errStateRef);
-  
+
   const handleSubmit = () => {
     if (isValidate()) {
       const note = { id: uuidv4(), title, category: checked, detail }
@@ -24,13 +25,13 @@ const CreateNote = ({ navigation }) => {
   }
 
   const isValidate = () => {
-    const isTitleValiate = valdateTitle()
+    const isTitleValidate = validateTitle()
     const isDetailValidate = validateDetail()
     setErrState(errStateRef)
-    return isTitleValiate && isDetailValidate
+    return isTitleValidate && isDetailValidate
   }
 
-  const valdateTitle = () => {
+  const validateTitle = () => {
     if (title) {
       errStateRef = { ...errStateRef, titleErrMsg: "" }
       return true
@@ -50,47 +51,53 @@ const CreateNote = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, margin: 10 }}>
-      <Logo showBackBtn={true} navigation={ navigation} />
+      <Logo showBackBtn={true} navigation={navigation} />
 
-      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
-      <TextInput style={styles.textInput} placeholder='Enter Title' value={title} onChangeText={(value) => setTitle(value)} />
-      {errorState.titleErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>}
+      <View style={styles.titleParent}>
+        <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
+        <TextInput style={styles.textInput}
+          placeholder='Enter Title'
+          value={title}
+          onChangeText={(value) => setTitle(value)}
+        />
+        {
+          errorState.titleErrMsg.length > 0 &&
+          <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>
+        }
+      </View>
 
       <Text style={styles.noteTitle}>Category</Text>
       <View>
         <ScrollView horizontal={true} style={styles.radioParent}>
-          <RadioButton
-            value="Important" color='#5DB075'
-            status={checked === 1 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(1)}
-          />
-          <Text style={styles.radioTitle}>Important</Text>
-          <RadioButton
-            value="To do lists" color='#5DB075'
-            status={checked === 2 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(2)}
-          />
-          <Text style={styles.radioTitle}>To Do Lists</Text>
-          <RadioButton
-            value="Lecture notes" color='#5DB075'
-            status={checked === 3 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(3)}
-          />
-          <Text style={styles.radioTitle}>Lecture Notes</Text>
-          <RadioButton
-            value="Shopping lists" color='#5DB075'
-            status={checked === 4 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(4)}
-          />
-          <Text style={styles.radioTitle}>Shopping Lists</Text>
+          {
+            categoryList.slice(1).map((item) => {
+              return (
+                <TouchableOpacity key={item.id} style={styles.radioBtn}>
+                  <RadioButton value="item.status"
+                    color='#5DB075'
+                    status={checked === item.id ? 'checked' : 'unchecked'}
+                    onPress={() => setChecked(item.id)}
+                  />
+                  <Text style={styles.radioTitle}>{item.status}</Text>
+                </TouchableOpacity>
+              )
+            })
+          }
         </ScrollView>
       </View>
 
       <Text style={styles.noteTitle}>Detail</Text>
       <View style={styles.multiParent}>
-        <TextInput style={styles.multiText} placeholder='Enter Detail' multiline={true} value={detail} onChangeText={(value) => setDetail(value)} />
+        <TextInput style={styles.multiText}
+          placeholder='Enter Detail'
+          multiline={true} value={detail}
+          onChangeText={(value) => setDetail(value)}
+        />
       </View>
-      {errorState.detailErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.detailErrMsg}</Text>}
+      {
+        errorState.detailErrMsg.length > 0 &&
+        <Text style={{ color: 'red' }}>{'*' + errorState.detailErrMsg}</Text>
+      }
 
       <TouchableOpacity style={styles.createBtn} onPress={handleSubmit} >
         <Text style={styles.createText}>Create</Text>
@@ -108,6 +115,9 @@ const styles = StyleSheet.create({
   marginTop: {
     marginTop: 10
   },
+  titleParent: {
+    marginBottom: 28
+  },
   noteTitle: {
     fontSize: 12,
     color: '#666666',
@@ -124,7 +134,6 @@ const styles = StyleSheet.create({
     width: '96%',
     alignSelf: 'center',
     borderRadius: 10,
-    marginBottom: 28
   },
   multiParent: {
     padding: 15,
@@ -157,6 +166,9 @@ const styles = StyleSheet.create({
   radioParent: {
     marginTop: 10,
     marginBottom: 20
+  },
+  radioBtn: {
+    flexDirection: 'row'
   },
   radioTitle: {
     fontSize: 14,

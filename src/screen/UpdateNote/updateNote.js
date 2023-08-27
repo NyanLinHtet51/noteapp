@@ -4,10 +4,11 @@ import Logo from '../../components/Logo/logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/native'
-import { NoteContext } from '../../navigation/navigation';
+import { CategoryContext, NoteContext } from '../../navigation/navigation';
 
 const UpdateNote = ({ navigation, route }) => {
-  const {notes,setNotes} = useContext(NoteContext)
+  const { notes, setNotes } = useContext(NoteContext)
+  const { categoryList, setCategoryList } = useContext(CategoryContext)
   const { noteDataID } = route.params;
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
@@ -71,43 +72,45 @@ const UpdateNote = ({ navigation, route }) => {
     <View style={{ flex: 1, margin: 10 }}>
       <Logo showBackBtn={true} navigation={navigation} />
 
-      <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
-      <TextInput style={styles.textInput} placeholder='Enter Title' value={title} onChangeText={(value) => setTitle(value)} />
-      {errorState.titleErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>}
+      <View style={styles.titleParent}>
+        <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
+        <TextInput style={styles.textInput}
+          placeholder='Enter Title' value={title}
+          onChangeText={(value) => setTitle(value)}
+        />
+        {
+          errorState.titleErrMsg.length > 0 &&
+          <Text style={{ color: 'red' }}>{'*' + errorState.titleErrMsg}</Text>
+        }
+      </View>
 
       <Text style={styles.noteTitle}>Category</Text>
       <View>
-        <ScrollView horizontal={true} style={styles.radioParent}>
-          <RadioButton
-            value="Important" color='#5DB075'
-            status={checked === 1 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(1)}
-          />
-          <Text style={styles.radioTitle}>Important</Text>
-          <RadioButton
-            value="To do lists" color='#5DB075'
-            status={checked === 2 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(2)}
-          />
-          <Text style={styles.radioTitle}>To Do Lists</Text>
-          <RadioButton
-            value="Lecture notes" color='#5DB075'
-            status={checked === 3 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(3)}
-          />
-          <Text style={styles.radioTitle}>Lecture Notes</Text>
-          <RadioButton
-            value="Shopping lists" color='#5DB075'
-            status={checked === 4 ? 'checked' : 'unchecked'}
-            onPress={() => setChecked(4)}
-          />
-          <Text style={styles.radioTitle}>Shopping Lists</Text>
+      <ScrollView horizontal={true} style={styles.radioParent}>
+          {
+            categoryList.slice(1).map((item) => {
+              return (
+                <TouchableOpacity key={item.id} style={styles.radioBtn}>
+                  <RadioButton value="item.status"
+                    color='#5DB075'
+                    status={checked === item.id ? 'checked' : 'unchecked'}
+                    onPress={() => setChecked(item.id)}
+                  />
+                  <Text style={styles.radioTitle}>{item.status}</Text>
+                </TouchableOpacity>
+              )
+            })
+          }
         </ScrollView>
       </View>
 
       <Text style={styles.noteTitle}>Detail</Text>
       <View style={styles.multiParent}>
-        <TextInput style={styles.multiText} placeholder='Enter Detail' multiline={true} value={detail} onChangeText={(value) => setDetail(value)} />
+        <TextInput style={styles.multiText}
+          placeholder='Enter Detail'
+          multiline={true} value={detail}
+          onChangeText={(value) => setDetail(value)}
+        />
       </View>
       {errorState.detailErrMsg.length > 0 && <Text style={{ color: 'red' }}>{'*' + errorState.detailErrMsg}</Text>}
 
@@ -126,6 +129,9 @@ let errStateRef = {
 const styles = StyleSheet.create({
   marginTop: {
     marginTop: 10
+  },
+  titleParent: {
+    marginBottom: 28
   },
   noteTitle: {
     fontSize: 12,
@@ -176,6 +182,9 @@ const styles = StyleSheet.create({
   radioParent: {
     marginTop: 10,
     marginBottom: 20
+  },
+  radioBtn: {
+    flexDirection: 'row'
   },
   radioTitle: {
     fontSize: 14,

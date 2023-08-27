@@ -12,13 +12,15 @@ import { NoteContext } from '../../navigation/navigation'
 
 const Home = ({ navigation }) => {
   const { notes, setNotes } = useContext(NoteContext);
-  const [allNote, setAllNote] = useState([])
+  const [allNote, setAllNote] = useState([]);
+  const [filteredNote, setFilteredNote] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [resultNotFound, setResultNotFound] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [categoryFiltered, setCategoryFiltered] = useState([]);
   const isFocus = useIsFocused()
 
+  //console.log("Hello",notes);
   useEffect(() => {
     if (isFocus) {
       getNoteList()
@@ -30,6 +32,7 @@ const Home = ({ navigation }) => {
     if (result !== null) {
       setNotes(JSON.parse(result));
       setAllNote(JSON.parse(result));
+      setFilteredNote(JSON.parse(result));
     }
   }
 
@@ -51,7 +54,7 @@ const Home = ({ navigation }) => {
   const allNoteList = (arrayList) => {
     setSearchValue('');
     setResultNotFound(false);
-    setNotes([...arrayList])
+    setFilteredNote([...arrayList])
   }
 
   const filteredNoteList = (arrayList, text) => {
@@ -60,7 +63,7 @@ const Home = ({ navigation }) => {
     const searchNote = arrayList.filter(note => (
       note.title.toLowerCase().includes(text.toLowerCase())
     ));
-    searchNote.length > 0 ? setNotes([...searchNote]) : setResultNotFound(true)
+    searchNote.length > 0 ? setFilteredNote([...searchNote]) : setResultNotFound(true)
   }
 
   const getCategoryValue = async (categoryValue) => {
@@ -68,7 +71,7 @@ const Home = ({ navigation }) => {
       setTabValue(categoryValue);
       const newArray = allNote;
       const filteredArray = newArray.filter(note => (note.category === categoryValue));
-      setNotes([...filteredArray])
+      setFilteredNote([...filteredArray])
       setCategoryFiltered([...filteredArray])
     } else {
       setTabValue(categoryValue);
@@ -85,12 +88,11 @@ const Home = ({ navigation }) => {
       <View style={styles.container}>
         <Logo />
         <Search passSearchValue={searchValue} getSearchValue={getSearchValue} />
-        <Categories passValue={tabValue} getCategoryValue={getCategoryValue} />
+        <Categories passValue={tabValue} getCategoryValue={getCategoryValue} navigation={navigation} />
         {
           resultNotFound ? <NoResult/> :
-
             <FlatList
-              style={styles.noteParent} numColumns={2} data={notes}
+              style={styles.noteParent} numColumns={2} data={filteredNote}
               renderItem={({ item, index }) => <Notes item={item} index={index} onPress={(item) => openNote(item.id)} />}
               keyExtractor={item => item.id}
             />
