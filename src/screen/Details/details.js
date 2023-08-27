@@ -1,13 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { CategoryContext, NoteContext } from '../../navigation/navigation'
 import Logo from '../../components/Logo/logo'
 import { useIsFocused } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Ionicons';
+import { NoteContext } from '../../hooks/context/context';
 
 const Details = ({ navigation, route }) => {
-  const { notes, setNotes } = useContext(NoteContext);
-  const { categoryList, setCategoryList } = useContext(CategoryContext);
+  const { notes, categoryList, setCategoryList  } = useContext(NoteContext);
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
@@ -35,7 +34,7 @@ const Details = ({ navigation, route }) => {
       <Text style={styles.text}>{title}</Text>
 
       <Text style={styles.noteTitle}>Category</Text>
-      <Text style={styles.text}>{categoryList[checked].status}</Text>
+      <Text style={styles.text}>{categoryList[checked]?.status}</Text>
 
       <Text style={styles.noteTitle}>Detail</Text>
       <Text style={styles.text}>{detail}</Text>

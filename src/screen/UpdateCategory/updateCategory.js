@@ -1,12 +1,12 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import Logo from '../../components/Logo/logo'
-import { CategoryContext } from '../../navigation/navigation'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from '@react-navigation/native';
+import { NoteContext } from '../../hooks/context/context';
 
 const UpdateCategory = ({ navigation, route }) => {
-  const { categoryList, setCategoryList } = useContext(CategoryContext)
+  const { categoryList, setCategoryList } = useContext(NoteContext)
   const [categoryTitle, setCategoryTitle] = useState("")
   const [errorState, setErrState] = useState(errStateRef);
   const { categoryID } = route.params;

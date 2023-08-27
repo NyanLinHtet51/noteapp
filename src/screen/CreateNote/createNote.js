@@ -5,11 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { v4 as uuidv4 } from 'uuid'
 import 'react-native-get-random-values'
-import { CategoryContext, NoteContext } from '../../navigation/navigation';
+import { NoteContext } from '../../hooks/context/context';
 
 const CreateNote = ({ navigation }) => {
-  const { notes, setNotes } = useContext(NoteContext)
-  const { categoryList, setCategoryList } = useContext(CategoryContext)
+  const { notes, setNotes, categoryList } = useContext(NoteContext)
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);

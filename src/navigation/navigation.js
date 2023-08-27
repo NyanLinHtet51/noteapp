@@ -6,12 +6,12 @@ import UpdateNote from '../screen/UpdateNote/updateNote';
 import Details from '../screen/Details/details';
 import CreateCategory from '../screen/CreateCategory/createCategory';
 import UpdateCategory from '../screen/UpdateCategory/updateCategory';
-import { ContextProviders } from '../hooks/provider/noteProvider';
+import { NoteContextProvider } from '../hooks/provider/noteProvider';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <ContextProviders> 
+    <NoteContextProvider> 
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name='Home' component={Home} />
@@ -22,7 +22,7 @@ const AppNavigator = () => {
           <Stack.Screen name='UpdateCategory' component={UpdateCategory} />
         </Stack.Navigator>
       </NavigationContainer>
-    </ContextProviders>
+    </NoteContextProvider>
   );
 };
 

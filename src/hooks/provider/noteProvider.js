@@ -1,16 +1,14 @@
 import { categoryArray } from '../../util/costant';
 import React, { useState } from 'react';
-import { NoteContext, CategoryContext } from '../context/context';
+import { NoteContext } from '../context/context';
 
-export const ContextProviders = ({ children }) => {
+export const NoteContextProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
   const [categoryList, setCategoryList] = useState(categoryArray);
 
   return (
-    <CategoryContext.Provider value={{ categoryList, setCategoryList }}>
-      <NoteContext.Provider value={{ notes, setNotes }}>
+      <NoteContext.Provider value={{ notes, setNotes, categoryList, setCategoryList }}>
         {children}
       </NoteContext.Provider>
-    </CategoryContext.Provider>
   );
 };

@@ -3,14 +3,14 @@ import React, { useContext, useEffect, useState } from 'react'
 import { categoryArray } from '../../util/costant';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
-import { CategoryContext } from '../../navigation/navigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const Categories = ({ passValue, getCategoryValue, navigation }) => {
+import { NoteContext } from '../../hooks/context/context';
+const Categories = ({ passValue, filterNoteListByCategroy, navigation }) => {
 
   const [active, setActive] = useState(passValue);
   const [editBtnID, setEditBtnID] = useState('');
   const [isEdit, setIsEdit] = useState(false);
-  const { categoryList, setCategoryList } = useContext(CategoryContext)
+  const { categoryList, setCategoryList } = useContext(NoteContext)
   const isFocus = useIsFocused()
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Categories = ({ passValue, getCategoryValue, navigation }) => {
 
   const handlePress = (categoryID) => {
     setActive(categoryID)
-    getCategoryValue(categoryID)
+    filterNoteListByCategroy(categoryID)
     setEditBtnID('')
     setIsEdit(false)
   }
@@ -39,12 +39,12 @@ const Categories = ({ passValue, getCategoryValue, navigation }) => {
   }
 
   const updateCategory = (categoryID) => {
-    navigation.navigate("UpdateCategory", {categoryID})
+    navigation.navigate("UpdateCategory", { categoryID })
   }
 
   return (
     <View>
-      <ScrollView horizontal={true} style={styles.categoriesParent}>
+      <ScrollView horizontal={true} style={styles.categoriesParent} showsHorizontalScrollIndicator={false} >
         {
           categoryList.map((item) => {
             return (
@@ -58,7 +58,7 @@ const Categories = ({ passValue, getCategoryValue, navigation }) => {
                 {
                   editBtnID == item.id && isEdit &&
                   <TouchableOpacity style={styles.editCategoryBtn}
-                    onPress={() => {updateCategory(item.id)}}
+                    onPress={() => { updateCategory(item.id) }}
                   >
                     <Icon name="pencil-outline" style={styles.editCategoryIcon} />
                   </TouchableOpacity>
@@ -67,13 +67,9 @@ const Categories = ({ passValue, getCategoryValue, navigation }) => {
             )
           })
         }
-
-        {
-          isEdit &&
-          <TouchableOpacity style={styles.addCategoryBtn} onPress={() => { navigation.navigate("CreateCategory") }}>
-            <Icon name="add-outline" style={styles.addCategoryIcon} />
-          </TouchableOpacity>
-        }
+        <TouchableOpacity style={styles.addCategoryBtn} onPress={() => { navigation.navigate("CreateCategory") }}>
+          <Icon name="add-outline" style={styles.addCategoryIcon} />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   )

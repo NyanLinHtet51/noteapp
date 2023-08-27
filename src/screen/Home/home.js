@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NoResult from '../../components/Search/result'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native'
-import { NoteContext } from '../../navigation/navigation'
+import { NoteContext } from '../../hooks/context/context'
 
 const Home = ({ navigation }) => {
   const { notes, setNotes } = useContext(NoteContext);
@@ -23,11 +23,16 @@ const Home = ({ navigation }) => {
   //console.log("Hello",notes);
   useEffect(() => {
     if (isFocus) {
-      getNoteList()
+      prepareNoteList()
     }
   }, [isFocus])
 
-  const getNoteList = async () => {
+  const prepareNoteList = async() => {
+    await getAllNotes()
+    tabValue !== 0 && filterNoteListByCategroy(tabValue)
+  }
+
+  const getAllNotes = async () => {
     const result = await AsyncStorage.getItem('notes');
     if (result !== null) {
       setNotes(JSON.parse(result));
@@ -66,7 +71,7 @@ const Home = ({ navigation }) => {
     searchNote.length > 0 ? setFilteredNote([...searchNote]) : setResultNotFound(true)
   }
 
-  const getCategoryValue = async (categoryValue) => {
+  const filterNoteListByCategroy = async (categoryValue) => {
     if (categoryValue !== 0) {
       setTabValue(categoryValue);
       const newArray = allNote;
@@ -75,7 +80,7 @@ const Home = ({ navigation }) => {
       setCategoryFiltered([...filteredArray])
     } else {
       setTabValue(categoryValue);
-      return await getNoteList();
+      return await getAllNotes();
     }
   }
 
@@ -88,7 +93,7 @@ const Home = ({ navigation }) => {
       <View style={styles.container}>
         <Logo />
         <Search passSearchValue={searchValue} getSearchValue={getSearchValue} />
-        <Categories passValue={tabValue} getCategoryValue={getCategoryValue} navigation={navigation} />
+        <Categories passValue={tabValue} filterNoteListByCategroy={filterNoteListByCategroy} navigation={navigation} />
         {
           resultNotFound ? <NoResult/> :
             <FlatList
