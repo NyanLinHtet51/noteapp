@@ -1,11 +1,11 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { useContext, useState } from 'react'
 import Logo from '../../components/Logo/logo'
-import { CategoryContext } from '../../navigation/navigation'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { NoteContext } from '../../hooks/context/context';
 
 const CreateCategory = ({ navigation }) => {
-  const { categoryList, setCategoryList } = useContext(CategoryContext)
+  const { categoryList } = useContext(NoteContext)
   const [categoryTitle, setCategoryTitle] = useState("")
   const [errorState, setErrState] = useState(errStateRef);
 

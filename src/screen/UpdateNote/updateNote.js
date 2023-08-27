@@ -4,11 +4,10 @@ import Logo from '../../components/Logo/logo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper'
 import { useIsFocused } from '@react-navigation/native'
-import { CategoryContext, NoteContext } from '../../navigation/navigation';
+import { NoteContext } from '../../hooks/context/context';
 
 const UpdateNote = ({ navigation, route }) => {
-  const { notes, setNotes } = useContext(NoteContext)
-  const { categoryList, setCategoryList } = useContext(CategoryContext)
+  const { notes, setNotes ,categoryList, setCategoryList} = useContext(NoteContext)
   const { noteDataID } = route.params;
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
