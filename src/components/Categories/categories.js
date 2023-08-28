@@ -1,6 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { categoryArray } from '../../util/costant';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,13 +10,13 @@ const Categories = ({ passValue, filterNoteListByCategroy, navigation }) => {
   const [editBtnID, setEditBtnID] = useState('');
   const [isEdit, setIsEdit] = useState(false);
   const { categoryList, setCategoryList } = useContext(NoteContext)
-  const isFocus = useIsFocused()
+  const isFocus = useIsFocused();
 
   useEffect(() => {
     if (isFocus) {
       getCategoryList()
     }
-  })
+  }, [isFocus])
 
   const getCategoryList = async () => {
     const result = await AsyncStorage.getItem('category');

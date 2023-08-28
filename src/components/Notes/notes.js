@@ -1,15 +1,14 @@
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 import { postColorList } from '../../util/costant';
-const Notes = ({item, index, onPress}) => {
-  const { title, detail } = item;
-
+const Notes = ({item, onPress}) => {
+  const { title, detail, colorID } = item;
   return (
-    <TouchableOpacity style={styles.textParent(postColorList[index%5])} onPress={() => {onPress(item)}}>
+    <TouchableOpacity style={styles.textParent(postColorList[colorID % postColorList.length ])} onPress={() => { onPress(item) }}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.details}>{detail.length > 20 ? detail.slice(0, 20) + "..." : detail}</Text>
     </TouchableOpacity>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

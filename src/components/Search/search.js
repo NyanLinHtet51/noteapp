@@ -5,8 +5,13 @@ import { useState } from 'react';
 
 const Search = ({ passSearchValue, getSearchValue }) => {
   const [result, setResult] = useState(passSearchValue);
+
   const passData = () => {
     getSearchValue(result);
+  }
+  const handleSearchCancel = () => {
+    setResult('');
+    getSearchValue('');
   }
   return (
     <View style={styles.inputParent}>
@@ -17,7 +22,7 @@ const Search = ({ passSearchValue, getSearchValue }) => {
       <TextInput style={styles.inputText} placeholder='Search for notes' onTextInput={passData} value={result} onChangeText={(text) => setResult(text)} />
       {
         !!result.length &&
-        <TouchableOpacity onPress={() => setResult('')}>
+        <TouchableOpacity onPress={handleSearchCancel}>
           <Icon name='close-outline' style={styles.button} />
         </TouchableOpacity>}
     </View>

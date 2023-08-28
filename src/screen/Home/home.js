@@ -8,7 +8,8 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import NoResult from '../../components/Search/result'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native'
-import { NoteContext } from '../../hooks/context/context'
+import { NoteContext } from '../../hooks/context/context';
+import { postColorList } from '../../util/costant'
 
 const Home = ({ navigation }) => {
   const { notes, setNotes } = useContext(NoteContext);
@@ -20,10 +21,10 @@ const Home = ({ navigation }) => {
   const [categoryFiltered, setCategoryFiltered] = useState([]);
   const isFocus = useIsFocused()
 
-  //console.log("Hello",notes);
+  
   useEffect(() => {
     if (isFocus) {
-      prepareNoteList()
+      prepareNoteList();
     }
   }, [isFocus])
 
@@ -88,6 +89,7 @@ const Home = ({ navigation }) => {
     navigation.navigate('Details',{noteDataID})
   }
 
+  //console.log(notesWithColors);
   return (
     <>
       <View style={styles.container}>
@@ -99,6 +101,7 @@ const Home = ({ navigation }) => {
             <FlatList
               style={styles.noteParent} numColumns={2} data={filteredNote}
               renderItem={({ item, index }) => <Notes item={item} index={index} onPress={(item) => openNote(item.id)} />}
+              showsVerticalScrollIndicator={false}
               keyExtractor={item => item.id}
             />
         }

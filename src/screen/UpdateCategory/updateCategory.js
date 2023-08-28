@@ -54,7 +54,7 @@ const UpdateCategory = ({ navigation, route }) => {
   }
 
   return (
-    <View style={{ flex: 1, margin: 10 }}>
+    <View style={{ flex: 1 }}>
       <Logo showBackBtn={true} navigation={navigation} />
 
       <View style={styles.titleParent}>

@@ -16,7 +16,7 @@ const CreateNote = ({ navigation }) => {
 
   const handleSubmit = () => {
     if (isValidate()) {
-      const note = { id: uuidv4(), title, category: checked, detail }
+      const note = { id: uuidv4(), title, category: checked, detail, colorID:notes.length }
       const totalNoteList = [...notes, note];
       AsyncStorage.setItem('notes', JSON.stringify(totalNoteList));
       navigation.navigate("Home")
@@ -49,7 +49,7 @@ const CreateNote = ({ navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1, margin: 10 }}>
+    <View style={{ flex: 1 }}>
       <Logo showBackBtn={true} navigation={navigation} />
 
       <View style={styles.titleParent}>
@@ -67,7 +67,7 @@ const CreateNote = ({ navigation }) => {
 
       <Text style={styles.noteTitle}>Category</Text>
       <View>
-        <ScrollView horizontal={true} style={styles.radioParent}>
+        <ScrollView horizontal={true} style={styles.radioParent} showsHorizontalScrollIndicator={false}>
           {
             categoryList.slice(1).map((item) => {
               return (

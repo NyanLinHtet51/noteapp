@@ -68,7 +68,7 @@ const UpdateNote = ({ navigation, route }) => {
   }
 
   return (
-    <View style={{ flex: 1, margin: 10 }}>
+    <View style={{ flex: 1 }}>
       <Logo showBackBtn={true} navigation={navigation} />
 
       <View style={styles.titleParent}>
@@ -85,7 +85,7 @@ const UpdateNote = ({ navigation, route }) => {
 
       <Text style={styles.noteTitle}>Category</Text>
       <View>
-      <ScrollView horizontal={true} style={styles.radioParent}>
+      <ScrollView horizontal={true} style={styles.radioParent} showsHorizontalScrollIndicator={false}>
           {
             categoryList.slice(1).map((item) => {
               return (

@@ -7,17 +7,21 @@ const Logo = ({ showBackBtn, navigation }) => {
   }
   return (
     <View style={styles.logoParent}>
+      <View style={styles.logo}>
         {
           showBackBtn &&
-            <TouchableOpacity onPress={backArrow}>
-              <Icon name="chevron-back-outline" style={styles.backArrow} />
-            </TouchableOpacity>
+          <TouchableOpacity onPress={backArrow}>
+            <Icon name="chevron-back-outline" style={styles.backArrow} />
+          </TouchableOpacity>
         }
-        <Text style={styles.logoText}>N O T E</Text>
-        <Text style={styles.logoTextColor}>A P P</Text>
-        <Text style={styles.logoText}>.</Text>
+        <View style={styles.textParent}>
+          <Text style={styles.logoText}>N O T E</Text>
+          <Text style={styles.logoTextColor}>A P P</Text>
+          <Text style={styles.logoText}>.</Text>
+        </View>
       </View>
-    
+    </View>
+
   )
 }
 
@@ -26,16 +30,20 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: '#000000',
     paddingTop: 4,
-    position: 'absolute',
-    left: -86,
-    top: 0
+    alignSelf: 'flex-start'
   },
   logoParent: {
-    flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 18,
     marginTop: 18,
-    position: 'relative',
+  },
+  logo: {
+    flexDirection: 'row',
+  },
+  textParent: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'center',
   },
   logoText: {
     color: "#1F2937",
