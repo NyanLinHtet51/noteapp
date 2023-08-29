@@ -8,7 +8,7 @@ import 'react-native-get-random-values'
 import { NoteContext } from '../../hooks/context/context';
 
 const CreateNote = ({ navigation }) => {
-  const { notes, setNotes, categoryList } = useContext(NoteContext)
+  const { notes, categoryList } = useContext(NoteContext)
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
@@ -50,7 +50,7 @@ const CreateNote = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Logo showBackBtn={true} navigation={navigation} />
+      <Logo showBackBtn={true} />
 
       <View style={styles.titleParent}>
         <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>

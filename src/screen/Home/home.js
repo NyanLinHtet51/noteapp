@@ -1,5 +1,5 @@
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Logo from '../../components/Logo/logo'
 import Search from '../../components/Search/search'
 import Categories from '../../components/Categories/categories'
@@ -9,19 +9,17 @@ import NoResult from '../../components/Search/result'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useIsFocused } from '@react-navigation/native'
 import { NoteContext } from '../../hooks/context/context';
-import { postColorList } from '../../util/costant'
 
 const Home = ({ navigation }) => {
-  const { notes, setNotes } = useContext(NoteContext);
-  const [allNote, setAllNote] = useState([]);
+  const { setNotes } = useContext(NoteContext);
+  const allNote = useRef([]);
   const [filteredNote, setFilteredNote] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [resultNotFound, setResultNotFound] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [categoryFiltered, setCategoryFiltered] = useState([]);
-  const isFocus = useIsFocused()
+  const isFocus = useIsFocused();
 
-  
   useEffect(() => {
     if (isFocus) {
       prepareNoteList();
@@ -30,14 +28,14 @@ const Home = ({ navigation }) => {
 
   const prepareNoteList = async() => {
     await getAllNotes()
-    tabValue !== 0 && filterNoteListByCategroy(tabValue)
+    tabValue !== 0 && filterNoteListByCategory(tabValue)
   }
 
   const getAllNotes = async () => {
     const result = await AsyncStorage.getItem('notes');
     if (result !== null) {
       setNotes(JSON.parse(result));
-      setAllNote(JSON.parse(result));
+      allNote.current = JSON.parse(result);
       setFilteredNote(JSON.parse(result));
     }
   }
@@ -51,7 +49,7 @@ const Home = ({ navigation }) => {
 
   const getSearchValue = (text) => {
     if (tabValue === 0) {
-      !text.trim() ? allNoteList(allNote) : filteredNoteList(allNote, text)
+      !text.trim() ? allNoteList(allNote.current) : filteredNoteList(allNote.current, text)
     } else {
       !text.trim() ? allNoteList(categoryFiltered) : filteredNoteList(categoryFiltered, text)
     }
@@ -72,10 +70,10 @@ const Home = ({ navigation }) => {
     searchNote.length > 0 ? setFilteredNote([...searchNote]) : setResultNotFound(true)
   }
 
-  const filterNoteListByCategroy = async (categoryValue) => {
+  const filterNoteListByCategory = async (categoryValue) => {
     if (categoryValue !== 0) {
       setTabValue(categoryValue);
-      const newArray = allNote;
+      const newArray = allNote.current;
       const filteredArray = newArray.filter(note => (note.category === categoryValue));
       setFilteredNote([...filteredArray])
       setCategoryFiltered([...filteredArray])
@@ -89,13 +87,12 @@ const Home = ({ navigation }) => {
     navigation.navigate('Details',{noteDataID})
   }
 
-  //console.log(notesWithColors);
   return (
     <>
       <View style={styles.container}>
         <Logo />
         <Search passSearchValue={searchValue} getSearchValue={getSearchValue} />
-        <Categories passValue={tabValue} filterNoteListByCategroy={filterNoteListByCategroy} navigation={navigation} />
+        <Categories passValue={tabValue} filterNoteListByCategory={filterNoteListByCategory} />
         {
           resultNotFound ? <NoResult/> :
             <FlatList

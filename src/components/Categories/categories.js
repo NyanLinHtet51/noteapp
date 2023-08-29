@@ -1,33 +1,46 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NoteContext } from '../../hooks/context/context';
-const Categories = ({ passValue, filterNoteListByCategroy, navigation }) => {
+const Categories = ({ passValue, filterNoteListByCategory }) => {
 
   const [active, setActive] = useState(passValue);
   const [editBtnID, setEditBtnID] = useState('');
   const [isEdit, setIsEdit] = useState(false);
-  const { categoryList, setCategoryList } = useContext(NoteContext)
+  const { notes, setNotes, categoryList, setCategoryList } = useContext(NoteContext)
   const isFocus = useIsFocused();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (isFocus) {
-      getCategoryList()
+      prepareCategoryList();
     }
   }, [isFocus])
 
+  const prepareCategoryList = async () => {
+    await getCategoryList();
+    await getNoteList();
+  }
+
+  const getNoteList = async () => {
+    const noteList = await AsyncStorage.getItem('notes');
+    if (noteList != null) {
+      setNotes(JSON.parse(noteList))
+    }
+  }
+
   const getCategoryList = async () => {
-    const result = await AsyncStorage.getItem('category');
-    if (result != null) {
-      setCategoryList(JSON.parse(result))
+    const categoryList = await AsyncStorage.getItem('category');
+    if (categoryList != null) {
+      setCategoryList(JSON.parse(categoryList))
     }
   }
 
   const handlePress = (categoryID) => {
     setActive(categoryID)
-    filterNoteListByCategroy(categoryID)
+    filterNoteListByCategory(categoryID)
     setEditBtnID('')
     setIsEdit(false)
   }
@@ -40,6 +53,23 @@ const Categories = ({ passValue, filterNoteListByCategroy, navigation }) => {
   const updateCategory = (categoryID) => {
     navigation.navigate("UpdateCategory", { categoryID })
   }
+
+  const deleteCategory = (categoryID) => {
+    const updatedCategoryList = categoryList.filter(categoryItem => categoryItem.id !== categoryID);
+    const updatedNoteList = notes.filter(note => note.category !== categoryID);
+
+    setCategoryList(updatedCategoryList);
+    setNotes(updatedNoteList);
+
+    AsyncStorage.setItem('category', JSON.stringify(updatedCategoryList));
+    AsyncStorage.setItem('notes', JSON.stringify(updatedNoteList));
+
+    setActive(0);
+    filterNoteListByCategory(0);
+    setEditBtnID('');
+    setIsEdit(false);
+  };
+
 
   return (
     <View>
@@ -56,11 +86,18 @@ const Categories = ({ passValue, filterNoteListByCategroy, navigation }) => {
                 <Text style={[styles.text, active === item.id && styles.activeText]}>{item.status}</Text>
                 {
                   editBtnID == item.id && isEdit &&
-                  <TouchableOpacity style={styles.editCategoryBtn}
-                    onPress={() => { updateCategory(item.id) }}
-                  >
-                    <Icon name="pencil-outline" style={styles.editCategoryIcon} />
-                  </TouchableOpacity>
+                  <>
+                    <TouchableOpacity style={styles.editCategoryBtn}
+                      onPress={() => { updateCategory(item.id) }}
+                    >
+                      <Icon name="pencil-outline" style={styles.editCategoryIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.editCategoryBtn,styles.btnRed]}
+                      onPress={() => { deleteCategory(item.id) }}
+                    >
+                      <Icon name="trash-outline" style={styles.editCategoryIcon} />
+                    </TouchableOpacity>
+                  </>
                 }
               </TouchableOpacity>
             )
@@ -117,6 +154,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 20
   },
+  btnRed: {
+    backgroundColor: '#FF0050'
+  }
 })
 
 export default Categories

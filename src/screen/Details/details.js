@@ -5,9 +5,10 @@ import { useIsFocused } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NoteContext } from '../../hooks/context/context';
 import { postColorList } from '../../util/costant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Details = ({ navigation, route }) => {
-  const { notes, categoryList, setCategoryList } = useContext(NoteContext);
+  const { notes, setNotes, categoryList } = useContext(NoteContext);
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
   const [checked, setChecked] = useState(1);
@@ -29,26 +30,40 @@ const Details = ({ navigation, route }) => {
     setColor(findItem.colorID)
   }
 
+  const deleteNote = () => {
+    const updatedNoteList = notes.filter(note => note.id !== noteDataID);
+    setNotes(updatedNoteList);
+    AsyncStorage.setItem('notes', JSON.stringify(updatedNoteList));
+    navigation.goBack();
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <Logo showBackBtn={true} navigation={navigation} />
-
       <View style={styles.cardParent}>
-        <View style={styles.card(postColorList[ color % postColorList.length ])}>
-          <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>
-          <Text style={styles.text}>{title}</Text>
+        <View style={styles.card}>
 
-          <Text style={[styles.noteTitle, styles.marginTop]}>Category</Text>
-          <Text style={styles.text}>{categoryList[checked]?.status}</Text>
+          <View style={styles.paddingHorizontal}>
+            <View style={{flexDirection: 'row',justifyContent: 'space-between'}}>
+            <View style={[styles.categoryTab(postColorList[color % postColorList.length]), styles.categoryParent]}>
+                <Text style={styles.categoryText}>{categoryList[checked].status}</Text>
+              </View>
+              <View style={styles.btnContainer}>
+                <TouchableOpacity style={styles.editBtnParent} onPress={() => {
+                  navigation.navigate('UpdateNote', { noteDataID })
+                }}>
+                  <Icon name='create-outline' style={styles.editBtn} />
+                </TouchableOpacity>
 
-          <Text style={[styles.noteTitle, styles.marginTop]}>Detail</Text>
-          <Text style={styles.text}>{detail}</Text>
-          <TouchableOpacity style={styles.editBtnParent} onPress={() => {
-            navigation.navigate('UpdateNote', { noteDataID })
-          }}>
-            <Text style={styles.editText}>Edit</Text>
-            <Icon name='create-outline' style={styles.editBtn} />
-          </TouchableOpacity>
+                <TouchableOpacity style={[styles.editBtnParent, styles.btnRed]} onPress={deleteNote}>
+                  <Icon name='trash-outline' style={styles.editBtn} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <Text style={styles.noteTitle}>{title}</Text>
+
+            <Text style={styles.text}>{detail}</Text></View>
         </View>
       </View>
     </View>
@@ -59,54 +74,75 @@ const styles = StyleSheet.create({
   cardParent: {
     flex: 1,
     paddingVertical: 50,
-    width: '93%',
-    alignSelf: 'center', 
+    width: '90%',
+    alignSelf: 'center',
   },
-  card: (color) => {
-    return {
-      justifyContent: 'center',
-      borderRadius: 10,
-      backgroundColor: color,
-    }
-  },
-  marginTop: {
-    marginTop: 30
+  card: {
+    paddingVertical: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10
   },
   noteTitle: {
-    fontSize: 24,
+    fontSize: 47,
     color: '#000000',
-    fontWeight: '500',
-    paddingLeft: 10
+    fontWeight: '700',
+    marginTop: 20
+  },
+  categoryTab: (color) => {
+    return {
+      justifyContent: 'center',
+      borderRadius: 5,
+      backgroundColor: color,
+      width: '40%',
+      paddingVertical: 8,
+      paddingHorizontal: 10,
+      marginTop: 5
+    }
+  },
+  categoryParent: {
+    flexDirection: 'row'
+  },
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '500'
   },
   text: {
-    marginTop: 10,
-    fontSize: 18,
-    color: '#666666',
-    paddingBottom: 10,
-    borderBottomWidth: 1,
+    fontSize: 20,
+    color: '#000000',
+    paddingTop: 10,
+    textAlign: 'left'
+  },
+  paddingHorizontal: {
+    width: '92%',
+    alignSelf: 'center'
+  },
+  borderBottom: {
+    borderBottomWidth: 2,
     borderBottomColor: "#FFFFFF",
-    paddingLeft: 10
+    paddingBottom: 20,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   editBtnParent: {
     backgroundColor: '#1F2937',
-    paddingVertical: 14,
-    marginVertical: 14,
-    width: '80%',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    width: '23%',
     alignSelf: 'center',
     flexDirection: 'row',
-    justifyContent: 'center',
-    borderRadius: 10
-  },
-  editText: {
-    fontSize: 15,
-    color: '#FFFFFF'
+    justifyContent: 'flex-end',
+    borderRadius: 10,
   },
   editBtn: {
     fontSize: 15,
-    marginTop: 2,
-    marginLeft: 5,
     color: '#FFFFFF',
   },
+  btnRed: {
+    backgroundColor: '#FF0050',
+    marginLeft: 10
+  }
 })
 
 export default Details

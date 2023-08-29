@@ -7,7 +7,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { NoteContext } from '../../hooks/context/context';
 
 const UpdateNote = ({ navigation, route }) => {
-  const { notes, setNotes ,categoryList, setCategoryList} = useContext(NoteContext)
+  const { notes, setNotes ,categoryList } = useContext(NoteContext)
   const { noteDataID } = route.params;
   const [title, setTitle] = useState("");
   const [detail, setDetail] = useState("");
@@ -69,7 +69,7 @@ const UpdateNote = ({ navigation, route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Logo showBackBtn={true} navigation={navigation} />
+      <Logo showBackBtn={true} />
 
       <View style={styles.titleParent}>
         <Text style={[styles.noteTitle, styles.marginTop]}>Title</Text>

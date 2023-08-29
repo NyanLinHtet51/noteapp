@@ -35,7 +35,7 @@ const CreateCategory = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Logo showBackBtn={true} navigation={navigation} />
+      <Logo showBackBtn={true} />
 
       <View style={styles.titleParent}>
         <Text style={[styles.noteTitle, styles.marginTop]}>Category Title</Text>
